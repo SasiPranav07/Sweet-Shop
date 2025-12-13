@@ -1,0 +1,69 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\anand\OneDrive\Desktop\sweet shop
+configfile: pytest.ini
+plugins: anyio-4.12.0, asyncio-1.3.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=module, asyncio_default_test_loop_scope=function
+collected 2 items
+
+backend\tests\test_auth.py F.                                            [100%]
+
+================================== FAILURES ===================================
+_____________________________ test_register_user ______________________________
+
+async_client = <httpx.AsyncClient object at 0x000002E0C9FE1D30>
+
+    @pytest.mark.asyncio
+    async def test_register_user(async_client):
+        payload = {
+            "email": "test@example.com",
+            "password": "strongpassword123",
+            "full_name": "Test User"
+        }
+        response = await async_client.post("/api/auth/register", json=payload)
+>       assert response.status_code == 201
+E       assert 400 == 201
+E        +  where 400 = <Response [400 Bad Request]>.status_code
+
+backend\tests\test_auth.py:12: AssertionError
+---------------------------- Captured stdout setup ----------------------------
+2025-12-14 00:24:46,460 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:24:46,460 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-12-14 00:24:46,461 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:24:46,463 INFO sqlalchemy.engine.Engine COMMIT
+----------------------------- Captured log setup ------------------------------
+INFO     sqlalchemy.engine.Engine:base.py:2710 BEGIN (implicit)
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA main.table_info("users")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:2716 COMMIT
+---------------------------- Captured stdout call -----------------------------
+2025-12-14 00:24:46,484 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:24:46,487 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.full_name, users.is_active, users.is_admin 
+FROM users 
+WHERE users.email = ?
+2025-12-14 00:24:46,487 INFO sqlalchemy.engine.Engine [generated in 0.00037s] ('test@example.com',)
+2025-12-14 00:24:46,489 INFO sqlalchemy.engine.Engine ROLLBACK
+------------------------------ Captured log call ------------------------------
+INFO     sqlalchemy.engine.Engine:base.py:2710 BEGIN (implicit)
+INFO     sqlalchemy.engine.Engine:base.py:1846 SELECT users.id, users.email, users.hashed_password, users.full_name, users.is_active, users.is_admin 
+FROM users 
+WHERE users.email = ?
+INFO     sqlalchemy.engine.Engine:base.py:1846 [generated in 0.00037s] ('test@example.com',)
+INFO     sqlalchemy.engine.Engine:base.py:2713 ROLLBACK
+============================== warnings summary ===============================
+backend\app\db\base.py:3
+  C:\Users\anand\OneDrive\Desktop\sweet shop\backend\app\db\base.py:3: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Base = declarative_base()
+
+backend/tests/test_auth.py::test_login_user
+  C:\Users\anand\OneDrive\Desktop\sweet shop\venv\Lib\site-packages\passlib\handlers\argon2.py:716: DeprecationWarning: Accessing argon2.__version__ is deprecated and will be removed in a future release. Use importlib.metadata directly to query for argon2-cffi's packaging metadata.
+    _argon2_cffi.__version__, max_version)
+
+backend/tests/test_auth.py::test_login_user
+  C:\Users\anand\OneDrive\Desktop\sweet shop\backend\app\core\security.py:18: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    expire = datetime.utcnow() + expires_delta
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend/tests/test_auth.py::test_register_user - assert 400 == 201
+=================== 1 failed, 1 passed, 3 warnings in 0.32s ===================

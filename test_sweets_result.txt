@@ -1,0 +1,191 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\anand\OneDrive\Desktop\sweet shop
+configfile: pytest.ini
+plugins: anyio-4.12.0, asyncio-1.3.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=module, asyncio_default_test_loop_scope=function
+collected 2 items
+
+backend\tests\test_sweets.py FF                                          [100%]
+
+================================== FAILURES ===================================
+______________________________ test_create_sweet ______________________________
+
+async_client = <httpx.AsyncClient object at 0x0000018F0D497E00>
+
+    @pytest.mark.asyncio
+    async def test_create_sweet(async_client):
+        # 1. Login/Get Token for generic user (should fail or succeed depending on logic, requirements say Protected)
+        # Requirements: "Add a new sweet" -> Protected? usually Admin only for shop management?
+        # "Inventory (Protected)" and "Sweets (Protected)".
+        # Let's assume Add is Admin only, View is Public or User?
+        # "Sweets (Protected): POST /api/sweets: Add a new sweet." -> implied Admin or Staff.
+        # "DELETE /api/sweets/:id: Delete a sweet (Admin only)." -> Explicit Admin.
+        # So POST might be allowed for authenticated users? or just Admin?
+        # Let's assume Admin for creation to be safe for a shop.
+    
+        token = "admin_token_placeholder"
+        headers = {"Authorization": f"Bearer {token}"}
+    
+        payload = {
+            "name": "Chocolate Fudge",
+            "category": "Fudge",
+            "price": 5.50,
+            "quantity": 100
+        }
+        # Expect 401/403 if not implemented or mock invalid
+        response = await async_client.post("/api/sweets/", json=payload, headers=headers)
+        # We expect 404 because route doesn't exist yet
+>       assert response.status_code == 404
+E       assert 401 == 404
+E        +  where 401 = <Response [401 Unauthorized]>.status_code
+
+backend\tests\test_sweets.py:39: AssertionError
+---------------------------- Captured stdout setup ----------------------------
+2025-12-14 00:28:49,560 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:28:49,560 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-12-14 00:28:49,560 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:28:49,561 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("sweets")
+2025-12-14 00:28:49,562 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:28:49,562 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info("sweets")
+2025-12-14 00:28:49,562 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:28:49,564 INFO sqlalchemy.engine.Engine 
+DROP TABLE users
+2025-12-14 00:28:49,564 INFO sqlalchemy.engine.Engine [no key 0.00017s] ()
+2025-12-14 00:28:49,573 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-12-14 00:28:49,574 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:28:49,575 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info("users")
+2025-12-14 00:28:49,575 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:28:49,576 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("sweets")
+2025-12-14 00:28:49,576 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:28:49,577 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info("sweets")
+2025-12-14 00:28:49,577 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:28:49,578 INFO sqlalchemy.engine.Engine 
+CREATE TABLE users (
+	id INTEGER NOT NULL, 
+	email VARCHAR NOT NULL, 
+	hashed_password VARCHAR NOT NULL, 
+	full_name VARCHAR, 
+	is_active BOOLEAN, 
+	is_admin BOOLEAN, 
+	PRIMARY KEY (id)
+)
+
+
+2025-12-14 00:28:49,579 INFO sqlalchemy.engine.Engine [no key 0.00024s] ()
+2025-12-14 00:28:49,587 INFO sqlalchemy.engine.Engine CREATE UNIQUE INDEX ix_users_email ON users (email)
+2025-12-14 00:28:49,587 INFO sqlalchemy.engine.Engine [no key 0.00024s] ()
+2025-12-14 00:28:49,596 INFO sqlalchemy.engine.Engine CREATE INDEX ix_users_id ON users (id)
+2025-12-14 00:28:49,596 INFO sqlalchemy.engine.Engine [no key 0.00020s] ()
+2025-12-14 00:28:49,605 INFO sqlalchemy.engine.Engine 
+CREATE TABLE sweets (
+	id INTEGER NOT NULL, 
+	name VARCHAR NOT NULL, 
+	category VARCHAR NOT NULL, 
+	price FLOAT NOT NULL, 
+	quantity INTEGER, 
+	image_url VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+
+2025-12-14 00:28:49,605 INFO sqlalchemy.engine.Engine [no key 0.00045s] ()
+2025-12-14 00:28:49,613 INFO sqlalchemy.engine.Engine CREATE INDEX ix_sweets_name ON sweets (name)
+2025-12-14 00:28:49,613 INFO sqlalchemy.engine.Engine [no key 0.00022s] ()
+2025-12-14 00:28:49,622 INFO sqlalchemy.engine.Engine CREATE INDEX ix_sweets_id ON sweets (id)
+2025-12-14 00:28:49,622 INFO sqlalchemy.engine.Engine [no key 0.00025s] ()
+2025-12-14 00:28:49,630 INFO sqlalchemy.engine.Engine CREATE INDEX ix_sweets_category ON sweets (category)
+2025-12-14 00:28:49,630 INFO sqlalchemy.engine.Engine [no key 0.00018s] ()
+2025-12-14 00:28:49,639 INFO sqlalchemy.engine.Engine COMMIT
+----------------------------- Captured log setup ------------------------------
+INFO     sqlalchemy.engine.Engine:base.py:2710 BEGIN (implicit)
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA main.table_info("users")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA main.table_info("sweets")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA temp.table_info("sweets")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 
+DROP TABLE users
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00017s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA main.table_info("users")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA temp.table_info("users")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA main.table_info("sweets")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA temp.table_info("sweets")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 
+CREATE TABLE users (
+	id INTEGER NOT NULL, 
+	email VARCHAR NOT NULL, 
+	hashed_password VARCHAR NOT NULL, 
+	full_name VARCHAR, 
+	is_active BOOLEAN, 
+	is_admin BOOLEAN, 
+	PRIMARY KEY (id)
+)
+
+
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00024s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 CREATE UNIQUE INDEX ix_users_email ON users (email)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00024s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 CREATE INDEX ix_users_id ON users (id)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00020s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 
+CREATE TABLE sweets (
+	id INTEGER NOT NULL, 
+	name VARCHAR NOT NULL, 
+	category VARCHAR NOT NULL, 
+	price FLOAT NOT NULL, 
+	quantity INTEGER, 
+	image_url VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00045s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 CREATE INDEX ix_sweets_name ON sweets (name)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00022s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 CREATE INDEX ix_sweets_id ON sweets (id)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00025s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 CREATE INDEX ix_sweets_category ON sweets (category)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00018s] ()
+INFO     sqlalchemy.engine.Engine:base.py:2716 COMMIT
+______________________________ test_read_sweets _______________________________
+
+async_client = <httpx.AsyncClient object at 0x0000018F0D497E00>
+
+    @pytest.mark.asyncio
+    async def test_read_sweets(async_client):
+        response = await async_client.get("/api/sweets/")
+>       assert response.status_code == 404
+E       assert 200 == 404
+E        +  where 200 = <Response [200 OK]>.status_code
+
+backend\tests\test_sweets.py:44: AssertionError
+---------------------------- Captured stdout call -----------------------------
+2025-12-14 00:28:49,800 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:28:49,802 INFO sqlalchemy.engine.Engine SELECT sweets.id, sweets.name, sweets.category, sweets.price, sweets.quantity, sweets.image_url 
+FROM sweets
+ LIMIT ? OFFSET ?
+2025-12-14 00:28:49,802 INFO sqlalchemy.engine.Engine [generated in 0.00020s] (100, 0)
+2025-12-14 00:28:49,804 INFO sqlalchemy.engine.Engine ROLLBACK
+------------------------------ Captured log call ------------------------------
+INFO     sqlalchemy.engine.Engine:base.py:2710 BEGIN (implicit)
+INFO     sqlalchemy.engine.Engine:base.py:1846 SELECT sweets.id, sweets.name, sweets.category, sweets.price, sweets.quantity, sweets.image_url 
+FROM sweets
+ LIMIT ? OFFSET ?
+INFO     sqlalchemy.engine.Engine:base.py:1846 [generated in 0.00020s] (100, 0)
+INFO     sqlalchemy.engine.Engine:base.py:2713 ROLLBACK
+============================== warnings summary ===============================
+backend\app\db\base.py:3
+  C:\Users\anand\OneDrive\Desktop\sweet shop\backend\app\db\base.py:3: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Base = declarative_base()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend/tests/test_sweets.py::test_create_sweet - assert 401 == 404
+FAILED backend/tests/test_sweets.py::test_read_sweets - assert 200 == 404
+======================== 2 failed, 1 warning in 0.27s =========================

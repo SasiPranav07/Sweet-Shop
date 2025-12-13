@@ -1,0 +1,31 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\anand\OneDrive\Desktop\sweet shop\backend
+configfile: pytest.ini
+plugins: anyio-4.12.0, asyncio-1.3.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collected 2 items
+
+backend\tests\test_auth.py EE                                            [100%]
+
+=================================== ERRORS ====================================
+____________________ ERROR at setup of test_register_user _____________________
+ScopeMismatch: You tried to access the function scoped fixture _function_scoped_runner with a module scoped request object. Requesting fixture stack:
+tests\conftest.py:15:  def async_client()
+Requested fixture:
+..\venv\Lib\site-packages\pytest_asyncio\plugin.py:795:  def _scoped_runner(event_loop_policy, request: 'FixtureRequest') -> 'Iterator[Runner]'
+______________________ ERROR at setup of test_login_user ______________________
+ScopeMismatch: You tried to access the function scoped fixture _function_scoped_runner with a module scoped request object. Requesting fixture stack:
+tests\conftest.py:15:  def async_client()
+Requested fixture:
+..\venv\Lib\site-packages\pytest_asyncio\plugin.py:795:  def _scoped_runner(event_loop_policy, request: 'FixtureRequest') -> 'Iterator[Runner]'
+============================== warnings summary ===============================
+backend\app\db\base.py:3
+  C:\Users\anand\OneDrive\Desktop\sweet shop\backend\app\db\base.py:3: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Base = declarative_base()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR backend\tests\test_auth.py::test_register_user - Failed: ScopeMismatch:...
+ERROR backend\tests\test_auth.py::test_login_user - Failed: ScopeMismatch: Yo...
+======================== 1 warning, 2 errors in 0.05s =========================

@@ -1,0 +1,239 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.2, pluggy-1.6.0
+rootdir: C:\Users\anand\OneDrive\Desktop\sweet shop
+configfile: pytest.ini
+plugins: anyio-4.12.0, asyncio-1.3.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=module, asyncio_default_test_loop_scope=function
+collected 2 items
+
+backend\tests\test_inventory.py FF                                       [100%]
+
+================================== FAILURES ===================================
+_____________________________ test_purchase_sweet _____________________________
+
+async_client = <httpx.AsyncClient object at 0x000002414E857E00>
+
+    @pytest.mark.asyncio
+    async def test_purchase_sweet(async_client):
+        # Setup: Create a sweet with quantity 10
+        from app.main import app
+        from app.routes.sweets import get_current_admin
+        # We need to use dependency override to seed data easily via the API or specific setup
+    
+        admin = User(email="admin@test.com", is_admin=True, id=1)
+        app.dependency_overrides[get_current_admin] = lambda: admin
+    
+        # Create sweet
+        create_res = await async_client.post("/api/sweets/", json={
+            "name": "Lollipop", "category": "Hard Candy", "price": 0.50, "quantity": 10
+        })
+        sweet_id = create_res.json()["id"]
+        app.dependency_overrides = {} # Reset admin override
+    
+        # 1. Purchase successful
+        # Need to be authenticated? "Inventory (Protected)" -> assumed User login required
+        # But for this test let's mock a user login
+        from app.routes.sweets import get_current_user
+        user = User(email="user@test.com", is_admin=False, id=2)
+        app.dependency_overrides[get_current_user] = lambda: user
+    
+        res = await async_client.post(f"/api/sweets/{sweet_id}/purchase")
+>       assert res.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+backend\tests\test_inventory.py:30: AssertionError
+---------------------------- Captured stdout setup ----------------------------
+2025-12-14 00:30:48,397 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:30:48,397 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-12-14 00:30:48,397 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:30:48,401 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("sweets")
+2025-12-14 00:30:48,401 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:30:48,405 INFO sqlalchemy.engine.Engine 
+DROP TABLE sweets
+2025-12-14 00:30:48,405 INFO sqlalchemy.engine.Engine [no key 0.00035s] ()
+2025-12-14 00:30:48,419 INFO sqlalchemy.engine.Engine 
+DROP TABLE users
+2025-12-14 00:30:48,419 INFO sqlalchemy.engine.Engine [no key 0.00054s] ()
+2025-12-14 00:30:48,432 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-12-14 00:30:48,433 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:30:48,435 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info("users")
+2025-12-14 00:30:48,435 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:30:48,438 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("sweets")
+2025-12-14 00:30:48,438 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:30:48,441 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info("sweets")
+2025-12-14 00:30:48,441 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:30:48,443 INFO sqlalchemy.engine.Engine 
+CREATE TABLE users (
+	id INTEGER NOT NULL, 
+	email VARCHAR NOT NULL, 
+	hashed_password VARCHAR NOT NULL, 
+	full_name VARCHAR, 
+	is_active BOOLEAN, 
+	is_admin BOOLEAN, 
+	PRIMARY KEY (id)
+)
+
+
+2025-12-14 00:30:48,444 INFO sqlalchemy.engine.Engine [no key 0.00023s] ()
+2025-12-14 00:30:48,453 INFO sqlalchemy.engine.Engine CREATE UNIQUE INDEX ix_users_email ON users (email)
+2025-12-14 00:30:48,454 INFO sqlalchemy.engine.Engine [no key 0.00033s] ()
+2025-12-14 00:30:48,464 INFO sqlalchemy.engine.Engine CREATE INDEX ix_users_id ON users (id)
+2025-12-14 00:30:48,464 INFO sqlalchemy.engine.Engine [no key 0.00023s] ()
+2025-12-14 00:30:48,474 INFO sqlalchemy.engine.Engine 
+CREATE TABLE sweets (
+	id INTEGER NOT NULL, 
+	name VARCHAR NOT NULL, 
+	category VARCHAR NOT NULL, 
+	price FLOAT NOT NULL, 
+	quantity INTEGER, 
+	image_url VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+
+2025-12-14 00:30:48,474 INFO sqlalchemy.engine.Engine [no key 0.00023s] ()
+2025-12-14 00:30:48,483 INFO sqlalchemy.engine.Engine CREATE INDEX ix_sweets_name ON sweets (name)
+2025-12-14 00:30:48,483 INFO sqlalchemy.engine.Engine [no key 0.00021s] ()
+2025-12-14 00:30:48,494 INFO sqlalchemy.engine.Engine CREATE INDEX ix_sweets_id ON sweets (id)
+2025-12-14 00:30:48,494 INFO sqlalchemy.engine.Engine [no key 0.00022s] ()
+2025-12-14 00:30:48,502 INFO sqlalchemy.engine.Engine CREATE INDEX ix_sweets_category ON sweets (category)
+2025-12-14 00:30:48,503 INFO sqlalchemy.engine.Engine [no key 0.00031s] ()
+2025-12-14 00:30:48,512 INFO sqlalchemy.engine.Engine COMMIT
+----------------------------- Captured log setup ------------------------------
+INFO     sqlalchemy.engine.Engine:base.py:2710 BEGIN (implicit)
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA main.table_info("users")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA main.table_info("sweets")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 
+DROP TABLE sweets
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00035s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 
+DROP TABLE users
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00054s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA main.table_info("users")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA temp.table_info("users")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA main.table_info("sweets")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 PRAGMA temp.table_info("sweets")
+INFO     sqlalchemy.engine.Engine:base.py:1846 [raw sql] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 
+CREATE TABLE users (
+	id INTEGER NOT NULL, 
+	email VARCHAR NOT NULL, 
+	hashed_password VARCHAR NOT NULL, 
+	full_name VARCHAR, 
+	is_active BOOLEAN, 
+	is_admin BOOLEAN, 
+	PRIMARY KEY (id)
+)
+
+
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00023s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 CREATE UNIQUE INDEX ix_users_email ON users (email)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00033s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 CREATE INDEX ix_users_id ON users (id)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00023s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 
+CREATE TABLE sweets (
+	id INTEGER NOT NULL, 
+	name VARCHAR NOT NULL, 
+	category VARCHAR NOT NULL, 
+	price FLOAT NOT NULL, 
+	quantity INTEGER, 
+	image_url VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00023s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 CREATE INDEX ix_sweets_name ON sweets (name)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00021s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 CREATE INDEX ix_sweets_id ON sweets (id)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00022s] ()
+INFO     sqlalchemy.engine.Engine:base.py:1846 CREATE INDEX ix_sweets_category ON sweets (category)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [no key 0.00031s] ()
+INFO     sqlalchemy.engine.Engine:base.py:2716 COMMIT
+---------------------------- Captured stdout call -----------------------------
+2025-12-14 00:30:48,524 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:30:48,526 INFO sqlalchemy.engine.Engine INSERT INTO sweets (name, category, price, quantity, image_url) VALUES (?, ?, ?, ?, ?)
+2025-12-14 00:30:48,527 INFO sqlalchemy.engine.Engine [generated in 0.00042s] ('Lollipop', 'Hard Candy', 0.5, 10, None)
+2025-12-14 00:30:48,531 INFO sqlalchemy.engine.Engine COMMIT
+2025-12-14 00:30:48,540 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:30:48,543 INFO sqlalchemy.engine.Engine SELECT sweets.id, sweets.name, sweets.category, sweets.price, sweets.quantity, sweets.image_url 
+FROM sweets 
+WHERE sweets.id = ?
+2025-12-14 00:30:48,543 INFO sqlalchemy.engine.Engine [generated in 0.00035s] (1,)
+2025-12-14 00:30:48,546 INFO sqlalchemy.engine.Engine ROLLBACK
+------------------------------ Captured log call ------------------------------
+INFO     sqlalchemy.engine.Engine:base.py:2710 BEGIN (implicit)
+INFO     sqlalchemy.engine.Engine:base.py:1846 INSERT INTO sweets (name, category, price, quantity, image_url) VALUES (?, ?, ?, ?, ?)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [generated in 0.00042s] ('Lollipop', 'Hard Candy', 0.5, 10, None)
+INFO     sqlalchemy.engine.Engine:base.py:2716 COMMIT
+INFO     sqlalchemy.engine.Engine:base.py:2710 BEGIN (implicit)
+INFO     sqlalchemy.engine.Engine:base.py:1846 SELECT sweets.id, sweets.name, sweets.category, sweets.price, sweets.quantity, sweets.image_url 
+FROM sweets 
+WHERE sweets.id = ?
+INFO     sqlalchemy.engine.Engine:base.py:1846 [generated in 0.00035s] (1,)
+INFO     sqlalchemy.engine.Engine:base.py:2713 ROLLBACK
+__________________________ test_restock_sweet_admin ___________________________
+
+async_client = <httpx.AsyncClient object at 0x000002414E857E00>
+
+    @pytest.mark.asyncio
+    async def test_restock_sweet_admin(async_client):
+        from app.main import app
+        from app.routes.sweets import get_current_admin
+    
+        admin = User(email="admin@test.com", is_admin=True, id=1)
+        app.dependency_overrides[get_current_admin] = lambda: admin
+    
+        # Create sweet
+        create_res = await async_client.post("/api/sweets/", json={
+            "name": "Gummy Bears", "category": "Gummy", "price": 1.50, "quantity": 0
+        })
+        sweet_id = create_res.json()["id"]
+    
+        # Restock
+        payload = {"quantity": 50}
+        res = await async_client.post(f"/api/sweets/{sweet_id}/restock", json=payload)
+>       assert res.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+backend\tests\test_inventory.py:56: AssertionError
+---------------------------- Captured stdout call -----------------------------
+2025-12-14 00:30:48,782 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:30:48,782 INFO sqlalchemy.engine.Engine INSERT INTO sweets (name, category, price, quantity, image_url) VALUES (?, ?, ?, ?, ?)
+2025-12-14 00:30:48,782 INFO sqlalchemy.engine.Engine [cached since 0.2562s ago] ('Gummy Bears', 'Gummy', 1.5, 0, None)
+2025-12-14 00:30:48,786 INFO sqlalchemy.engine.Engine COMMIT
+2025-12-14 00:30:48,797 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:30:48,797 INFO sqlalchemy.engine.Engine SELECT sweets.id, sweets.name, sweets.category, sweets.price, sweets.quantity, sweets.image_url 
+FROM sweets 
+WHERE sweets.id = ?
+2025-12-14 00:30:48,797 INFO sqlalchemy.engine.Engine [cached since 0.2542s ago] (2,)
+2025-12-14 00:30:48,799 INFO sqlalchemy.engine.Engine ROLLBACK
+------------------------------ Captured log call ------------------------------
+INFO     sqlalchemy.engine.Engine:base.py:2710 BEGIN (implicit)
+INFO     sqlalchemy.engine.Engine:base.py:1846 INSERT INTO sweets (name, category, price, quantity, image_url) VALUES (?, ?, ?, ?, ?)
+INFO     sqlalchemy.engine.Engine:base.py:1846 [cached since 0.2562s ago] ('Gummy Bears', 'Gummy', 1.5, 0, None)
+INFO     sqlalchemy.engine.Engine:base.py:2716 COMMIT
+INFO     sqlalchemy.engine.Engine:base.py:2710 BEGIN (implicit)
+INFO     sqlalchemy.engine.Engine:base.py:1846 SELECT sweets.id, sweets.name, sweets.category, sweets.price, sweets.quantity, sweets.image_url 
+FROM sweets 
+WHERE sweets.id = ?
+INFO     sqlalchemy.engine.Engine:base.py:1846 [cached since 0.2542s ago] (2,)
+INFO     sqlalchemy.engine.Engine:base.py:2713 ROLLBACK
+============================== warnings summary ===============================
+backend\app\db\base.py:3
+  C:\Users\anand\OneDrive\Desktop\sweet shop\backend\app\db\base.py:3: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    Base = declarative_base()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend/tests/test_inventory.py::test_purchase_sweet - assert 404 == 200
+FAILED backend/tests/test_inventory.py::test_restock_sweet_admin - assert 404...
+======================== 2 failed, 1 warning in 0.46s =========================
