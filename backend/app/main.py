@@ -21,11 +21,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "https://sweet-shop-flax-seven.vercel.app"
-    ], # Allow specific production domains
+    # allow_origins=["..."], # Removed in favor of regex
+    allow_origin_regex="https://.*\\.vercel\\.app", # Allow ALL Vercel domains (production & preview)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
