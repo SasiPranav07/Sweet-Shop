@@ -237,3 +237,4 @@ backend\app\db\base.py:3
 FAILED backend/tests/test_inventory.py::test_purchase_sweet - assert 404 == 200
 FAILED backend/tests/test_inventory.py::test_restock_sweet_admin - assert 404...
 ======================== 2 failed, 1 warning in 0.46s =========================
+^C

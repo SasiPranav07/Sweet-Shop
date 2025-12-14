@@ -189,3 +189,4 @@ backend\app\db\base.py:3
 FAILED backend/tests/test_sweets.py::test_create_sweet - assert 401 == 404
 FAILED backend/tests/test_sweets.py::test_read_sweets - assert 200 == 404
 ======================== 2 failed, 1 warning in 0.27s =========================
+^C

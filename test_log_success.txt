@@ -67,3 +67,4 @@ backend/tests/test_auth.py::test_login_user
 =========================== short test summary info ===========================
 FAILED backend/tests/test_auth.py::test_register_user - assert 400 == 201
 =================== 1 failed, 1 passed, 3 warnings in 0.32s ===================
+^C

@@ -52,8 +52,18 @@ git remote add origin https://github.com/SasiPranav07/Sweet-Shop.git
 ```
 *(If it says "remote origin already exists", ignore it).*
 
-**4. Push the code:**
+**4. FIX BRANCH NAME & PUSH (Crucial Step):**
+Run these two commands to fix the "refspec" error:
+
 ```bash
+git branch -M main
+git push -u origin main
+```
+
+**If it still fails:**
+It means your **commit failed** earlier (because of the email error). Run this again:
+```bash
+git commit -m "Final Commit"
 git push -u origin main
 ```
 
